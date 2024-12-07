@@ -11,10 +11,13 @@ const FoodThrowMatterJS = () => {
     const imageObjects = [potatoImg, pizzaImg, sausageImg];
     const width = window.innerWidth
     const height = window.innerHeight
+    const countFood = 18
 
     useEffect(() => {
-        let engine = Engine.create({});
-        let render = Render.create({
+
+        // initialize environment for matter.js
+        const engine = Engine.create({});
+        const render = Render.create({
             element: sceneRef.current!,
             engine: engine,
             canvas: canvasRef.current!,
@@ -26,6 +29,8 @@ const FoodThrowMatterJS = () => {
             },
         });
 
+
+        // create wall for hit object and add to World
         const leftWall = Bodies.rectangle(0, 0, 40, height * 2, {
             isStatic: true,
             render: {
@@ -35,6 +40,8 @@ const FoodThrowMatterJS = () => {
         World.add(engine.world, [
             leftWall
         ])
+
+        // create food object with rectangle and add to world and set velocity
         const createFoodObject = (x: number, y: number, randomSize: number, imgSrc: string) => {
             const food = Matter.Bodies.rectangle(x, y, 50, 50, {
                 restitution: 0.8,
@@ -50,28 +57,32 @@ const FoodThrowMatterJS = () => {
             World.add(engine.world, food);
 
             Matter.Body.setVelocity(food, {
-                x: width < 768 ? -Math.random() * 20 - 10 : -Math.random() * 30 - 30,
-                y: width < 768 ? -2 : -4,
+                x: width < 768 ? -Math.random() * 20 - 10 : -Math.random() * 30 - 25,
+                y: width < 768 ? -2 : -6,
             });
         };
 
 
+        // generate obejcts and create random x and y and select image for food
         const generateObjects = () => {
-            for (let i = 0; i < 18; i++) {
+            for (let i = 0; i < countFood; i++) {
+                const randomNumber = Math.random()
                 const x = width + 300;
-                const y = (height / 3) - Math.random() * 30 - 30;
-                const imgSrc = imageObjects[Math.floor(Math.random() * imageObjects.length)];
-                const randomSize = Math.random()
-                createFoodObject(x, y, randomSize, imgSrc.src);
+                const y = (height / 3) - randomNumber * 30 - 30;
+                const imgSrc = imageObjects[Math.floor(randomNumber * imageObjects.length)];
+                createFoodObject(x, y, randomNumber, imgSrc.src);
             }
         };
 
         generateObjects();
 
+        // run engine
         Runner.run(engine)
         Render.run(render);
 
         return () => {
+
+            // cleanup
             Render.stop(render);
             World.clear(engine.world, true);
             Engine.clear(engine);

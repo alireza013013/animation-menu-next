@@ -11,6 +11,9 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        overlay : "#020b0a",
+        yellow : "#f9ec0c",
+        green : "#008C44"
       },
     },
   },
